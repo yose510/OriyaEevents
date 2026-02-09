@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OriyaEvents - הזמנות דיגיטליות מרהיבות</title>
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #ff6b9d;
+            --deep-rose: #c9356b;
+            --pearl: #fef4f8;
+            --cream: #fff9f5;
+            --charcoal: #2a2a2a;
+            --gold: #d4af37;
+            --shadow-rose: rgba(255, 107, 157, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: linear-gradient(165deg, var(--pearl) 0%, var(--cream) 40%, #fff 100%);
+            color: var(--charcoal);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Floating decorations */
+        .deco {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.06;
+            z-index: 0;
+        }
+        .deco-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--rose), transparent);
+            top: -300px;
+            right: -200px;
+            filter: blur(80px);
+            animation: float 25s ease-in-out infinite;
+        }
+        .deco-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--gold), transparent);
+            bottom: -100px;
+            left: -100px;
+            filter: blur(100px);
+            animation: float 30s ease-in-out infinite reverse;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 60px) scale(1.1); }
+        }
+
+        /* Accessibility button */
+        .access-fab {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            z-index: 1001;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .access-fab:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+        .access-menu {
+            position: fixed;
+            bottom: 110px;
+            left: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 16px 64px rgba(0,0,0,0.12);
+            padding: 28px;
+            z-index: 1000;
+            min-width: 300px;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .access-menu.show { display: block; }
+        .access-menu h3 {
+            color: var(--rose);
+            margin-bottom: 20px;
+            font-family: 'Yeseva One', serif;
+            border-bottom: 2px solid var(--pearl);
+            padding-bottom: 12px;
+        }
+        .access-opt {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--pearl);
+        }
+        .toggle {
+            width: 54px;
+            height: 28px;
+            background: #ddd;
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .toggle.on { background: var(--rose); }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            right: 3px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .toggle.on::after { transform: translateX(-26px); }
+
+        body.big * { font-size: 1.3em !important; }
+        body.dark { background: #1a1a1a !important; }
+        body.dark * { color: #fff !important; }
+        body.dark .hero, body.dark .packages, body.dark nav { background: #222 !important; }
+
+        /* Header */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            padding: 20px 0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            z-index: 100;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Yeseva One', serif;
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--charcoal);
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--rose);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: var(--rose); }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-family: 'Assistant', sans-serif;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            color: white;
+            box-shadow: 0 8px 24px var(--shadow-rose);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255,107,157,0.3);
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--rose);
+            border: 2px solid var(--rose);
+        }
+        .btn-ghost:hover {
+            background: var(--rose);
+            color: white;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 40px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero h1 {
+            font-family: 'Yeseva One', serif;
+            font-size: 4.5rem;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero p {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        /* Packages Section */
+        .packages {
+            padding: 100px 40px;
+            background: white;
+        }
+        .packages h2 {
+            text-align: center;
+            font-family: 'Yeseva One', serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .packages-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 60px;
+        }
+        
+        .event-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        .event-tab {
+            padding: 14px 32px;
+            background: var(--pearl);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .event-tab.active {
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            color: white;
+            border-color: var(--deep-rose);
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .package-card {
+            background: linear-gradient(145deg, #fff 0%, var(--pearl) 100%);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--rose), var(--gold));
+        }
+        .package-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 16px 48px rgba(255,107,157,0.2);
+        }
+        .package-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        .package-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--charcoal);
+        }
+        .package-price {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            font-family: 'Yeseva One', serif;
+        }
+        .package-invites {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+        }
+        .package-features {
+            text-align: right;
+            margin: 24px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--pearl);
+            border-bottom: 1px solid var(--pearl);
+        }
+        .feature {
+            padding: 8px 0;
+            color: #555;
+        }
+        .feature::before {
+            content: '✓';
+            color: var(--rose);
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 40px;
+            background: linear-gradient(165deg, var(--pearl) 0%, white 100%);
+        }
+        .features h2 {
+            text-align: center;
+            font-family: 'Yeseva One', serif;
+            font-size: 3rem;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, var(--rose), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: white;
+            padding: 40px 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 16px;
+            color: var(--deep-rose);
+        }
+        .feature-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Auth Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            overflow: hidden;
+            animation: modalIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        .modal-header h2 {
+            font-family: 'Yeseva One', serif;
+            font-size: 2rem;
+        }
+        .modal-body {
+            padding: 40px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--pearl);
+            margin-bottom: 32px;
+        }
+        .tab {
+            flex: 1;
+            padding: 16px;
+            background: none;
+            border: none;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .tab.active {
+            color: var(--rose);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--rose);
+        }
+        .form { display: none; }
+        .form.active { display: block; }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--charcoal);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--pearl);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--rose);
+            box-shadow: 0 0 0 4px rgba(255,107,157,0.1);
+        }
+        .msg {
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+        }
+        .error { background: #fee; color: #c33; border: 1px solid #fcc; }
+        .success { background: #efe; color: #3c3; border: 1px solid #cfc; }
+        .msg.show { display: block; }
+
+        footer {
+            background: var(--charcoal);
+            color: white;
+            text-align: center;
+            padding: 60px 40px;
+        }
+        footer .logo {
+            -webkit-text-fill-color: white;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .packages h2, .features h2 { font-size: 2.2rem; }
+            .nav-links { display: none; }
+            .packages-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="deco deco-1"></div>
+    <div class="deco deco-2"></div>
+
+    <button class="access-fab" onclick="document.getElementById('accessMenu').classList.toggle('show')">♿</button>
+    <div class="access-menu" id="accessMenu">
+        <h3>נגישות</h3>
+        <div class="access-opt">
+            <label>ניגודיות גבוהה</label>
+            <div class="toggle" onclick="document.body.classList.toggle('dark'); this.classList.toggle('on')"></div>
+        </div>
+        <div class="access-opt">
+            <label>טקסט גדול</label>
+            <div class="toggle" onclick="document.body.classList.toggle('big'); this.classList.toggle('on')"></div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="container">
+            <div class="logo">OriyaEvents</div>
+            <ul class="nav-links">
+                <li><a href="#home">ראשי</a></li>
+                <li><a href="#packages">חבילות</a></li>
+                <li><a href="#features">תכונות</a></li>
+            </ul>
+            <div style="display:flex; gap:16px;">
+                <button class="btn btn-ghost" onclick="openAuth('login')">התחבר</button>
+                <button class="btn btn-primary" onclick="openAuth('signup')">הרשם עכשיו</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>הזמנות שמרגשות 💕</h1>
+            <p>צור, עצב ושלח הזמנות דיגיטליות מרהיבות ב-WhatsApp</p>
+            <div class="hero-btns">
+                <button class="btn btn-primary" onclick="openAuth('signup')">התחל חינם</button>
+                <button class="btn btn-ghost" onclick="document.getElementById('packages').scrollIntoView({behavior:'smooth'})">גלה חבילות</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="packages" id="packages">
+        <div class="container">
+            <h2>בחר את החבילה המושלמת</h2>
+            <p class="packages-subtitle">חבילות מותאמות לכל אירוע ובכל תקציב</p>
+            
+            <div class="event-tabs">
+                <button class="event-tab active" onclick="filterPackages('wedding')">חתונה 💍</button>
+                <button class="event-tab" onclick="filterPackages('bar_mitzvah')">בר מצווה 🎉</button>
+                <button class="event-tab" onclick="filterPackages('bat_mitzvah')">בת מצווה 🎀</button>
+            </div>
+
+            <div class="packages-grid" id="packagesGrid">
+                <div class="package-card" data-type="wedding">
+                    <div class="package-icon">💝</div>
+                    <div class="package-name">חבילת 150</div>
+                    <div class="package-price">₪150</div>
+                    <div class="package-invites">150 הזמנות</div>
+                    <div class="package-features">
+                        <div class="feature">תבניות מעוצבות</div>
+                        <div class="feature">שליחה ב-WhatsApp</div>
+                        <div class="feature">העלאת Excel</div>
+                        <div class="feature">תמיכה מלאה</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectPackage(150, 150, 'wedding')">בחר חבילה</button>
+                </div>
+                
+                <div class="package-card" data-type="wedding">
+                    <div class="package-icon">💕</div>
+                    <div class="package-name">חבילת 200</div>
+                    <div class="package-price">₪200</div>
+                    <div class="package-invites">200 הזמנות</div>
+                    <div class="package-features">
+                        <div class="feature">תבניות מעוצבות</div>
+                        <div class="feature">שליחה ב-WhatsApp</div>
+                        <div class="feature">העלאת Excel</div>
+                        <div class="feature">תמיכה מלאה</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectPackage(200, 200, 'wedding')">בחר חבילה</button>
+                </div>
+                
+                <div class="package-card" data-type="wedding">
+                    <div class="package-icon">💖</div>
+                    <div class="package-name">חבילת 250</div>
+                    <div class="package-price">₪250</div>
+                    <div class="package-invites">250 הזמנות</div>
+                    <div class="package-features">
+                        <div class="feature">תבניות מעוצבות</div>
+                        <div class="feature">שליחה ב-WhatsApp</div>
+                        <div class="feature">העלאת Excel</div>
+                        <div class="feature">תמיכה מלאה</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectPackage(250, 250, 'wedding')">בחר חבילה</button>
+                </div>
+                
+                <div class="package-card" data-type="wedding">
+                    <div class="package-icon">💗</div>
+                    <div class="package-name">חבילת 300</div>
+                    <div class="package-price">₪300</div>
+                    <div class="package-invites">300 הזמנות</div>
+                    <div class="package-features">
+                        <div class="feature">תבניות מעוצבות</div>
+                        <div class="feature">שליחה ב-WhatsApp</div>
+                        <div class="feature">העלאת Excel</div>
+                        <div class="feature">תמיכה מלאה</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectPackage(300, 300, 'wedding')">בחר חבילה</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>למה OriyaEvents?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>תבניות מדהימות</h3>
+                    <p>עיצובים מקצועיים ומותאמים אישית לכל סוג אירוע</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI מתקדם</h3>
+                    <p>צור הזמנות מושלמות עם עזרת בינה מלאכותית</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>שליחה מהירה</h3>
+                    <p>שלח לכל האורחים ב-WhatsApp בלחיצת כפתור</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>ניהול פשוט</h3>
+                    <p>העלה Excel וצפה בסטטיסטיקות בזמן אמת</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="authModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeAuth()">&times;</button>
+                <h2>ברוכים הבאים</h2>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('login')">התחברות</button>
+                    <button class="tab" onclick="switchTab('signup')">הרשמה</button>
+                </div>
+                
+                <div class="msg error" id="authError"></div>
+                <div class="msg success" id="authSuccess"></div>
+
+                <form class="form active" id="loginForm" onsubmit="return handleLogin(event)">
+                    <div class="form-group">
+                        <label>אימייל</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>סיסמה</label>
+                        <input type="password" id="loginPass" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">התחבר</button>
+                </form>
+
+                <form class="form" id="signupForm" onsubmit="return handleSignup(event)">
+                    <div class="form-group">
+                        <label>שם מלא</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>אימייל</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>סיסמה</label>
+                        <input type="password" id="signupPass" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%">הרשם</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="logo">OriyaEvents</div>
+        <p>&copy; 2024 OriyaEvents. כל הזכויות שמורות.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const sb = window.supabase.createClient(
+            'https://kzxyewemuykimsblotif.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6eHlld2VtdXlraW1zYmxvdGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NTkyOTMsImV4cCI6MjA4NjEzNTI5M30.WzXKlxgNtziO6OBgXEQjhdNiR8eEJqOZFDFwjfFNoHY'
+        );
+
+        let selectedPackageData = null;
+
+        function filterPackages(type) {
+            document.querySelectorAll('.event-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.package-card');
+            cards.forEach(c => c.style.display = c.dataset.type === type ? 'block' : 'none');
+        }
+
+        function selectPackage(invites, price, type) {
+            selectedPackageData = { invites, price, type };
+            openAuth('signup');
+        }
+
+        function openAuth(tab) {
+            document.getElementById('authModal').classList.add('show');
+            switchTab(tab);
+        }
+        
+        function closeAuth() {
+            document.getElementById('authModal').classList.remove('show');
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            event?.target?.classList.add('active');
+            document.getElementById(tab + 'Form').classList.add('active');
+            clearMsgs();
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+        
+        function showSuccess(msg) {
+            const el = document.getElementById('authSuccess');
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+        
+        function clearMsgs() {
+            document.getElementById('authError').classList.remove('show');
+            document.getElementById('authSuccess').classList.remove('show');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            clearMsgs();
+            
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+                if (error) throw error;
+                
+                const { data: user } = await sb.from('users').select('*').eq('id', data.user.id).single();
+                window.location.href = user.is_admin ? 'admin.html' : 'dashboard.html';
+            } catch (err) {
+                showError('אימייל או סיסמה שגויים');
+            }
+            return false;
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            clearMsgs();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPass').value;
+            
+            try {
+                const { data, error } = await sb.auth.signUp({
+                    email, password: pass,
+                    options: { data: { full_name: name } }
+                });
+                if (error) throw error;
+                
+                await sb.from('users').insert([{
+                    id: data.user.id, email, full_name: name,
+                    package_invites: 0, package_sent: 0,
+                    is_admin: false
+                }]);
+                
+                showSuccess('נרשמת בהצלחה! מעביר אותך...');
+                
+                setTimeout(async () => {
+                    const { data: sessionData } = await sb.auth.signInWithPassword({ email, password: pass });
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (err) {
+                showError('שגיאה ברישום - נסה מייל אחר');
+            }
+            return false;
+        }
+
+        (async () => {
+            const { data: { user } } = await sb.auth.getUser();
+            if (user) {
+                const { data: profile } = await sb.from('users').select('*').eq('id', user.id).single();
+                window.location.href = profile.is_admin ? 'admin.html' : 'dashboard.html';
+            }
+        })();
+    </script>
+</body>
+</html>

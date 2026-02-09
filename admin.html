@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פאנל ניהול - OriyaEvents</title>
+    <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #ff6b9d;
+            --deep-rose: #c9356b;
+            --dark: #1a1a2e;
+            --blue: #4facfe;
+            --green: #43e97b;
+            --orange: #fa709a;
+            --purple: #a78bfa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f6fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dark), #2d2d44);
+            color: white;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .logo {
+            font-family: 'Yeseva One', serif;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-badge {
+            background: var(--rose);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Assistant', sans-serif;
+        }
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Assistant', sans-serif;
+        }
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1600px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+        .stat-card.blue::before { background: var(--blue); }
+        .stat-card.green::before { background: var(--green); }
+        .stat-card.orange::before { background: var(--orange); }
+        .stat-card.purple::before { background: var(--purple); }
+        
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--dark);
+            font-family: 'Yeseva One', serif;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            margin-bottom: 32px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .section h2 {
+            font-family: 'Yeseva One', serif;
+            font-size: 2rem;
+            color: var(--dark);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255,107,157,0.3);
+        }
+
+        /* Search */
+        .search-bar {
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 1rem;
+            width: 300px;
+            transition: all 0.3s;
+        }
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--rose);
+            box-shadow: 0 0 0 4px rgba(255,107,157,0.1);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: linear-gradient(135deg, var(--dark), #2d2d44);
+            color: white;
+        }
+        th {
+            padding: 18px 16px;
+            text-align: right;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        td {
+            padding: 18px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr {
+            transition: all 0.3s;
+        }
+        tbody tr:hover {
+            background: #fef4f8;
+        }
+        .btn-small {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-edit {
+            background: var(--blue);
+            color: white;
+        }
+        .btn-edit:hover {
+            background: #3a8fd8;
+            transform: translateY(-2px);
+        }
+        .btn-approve {
+            background: var(--green);
+            color: white;
+        }
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            overflow: hidden;
+            animation: modalIn 0.3s;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+            color: white;
+            padding: 32px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--rose);
+        }
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 32px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .tab {
+            padding: 16px 32px;
+            background: none;
+            border: none;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            position: relative;
+        }
+        .tab.active {
+            color: var(--rose);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--rose);
+        }
+
+        /* Package selector */
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .package-option {
+            background: #f9fafb;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .package-option:hover {
+            border-color: var(--rose);
+            background: #fef4f8;
+        }
+        .package-option.selected {
+            border-color: var(--rose);
+            background: var(--rose);
+            color: white;
+        }
+        .package-number {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Yeseva One', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            🔧 OriyaEvents
+            <span class="admin-badge">מנהל</span>
+        </div>
+        <button class="btn btn-logout" onclick="logout()">יציאה</button>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card blue">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">משתמשים</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon">💌</div>
+                <div class="stat-value" id="totalInvites">0</div>
+                <div class="stat-label">הזמנות נוצרו</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon">📤</div>
+                <div class="stat-value" id="totalSent">0</div>
+                <div class="stat-label">הזמנות נשלחו</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalRevenue">₪0</div>
+                <div class="stat-label">הכנסות</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>ניהול משתמשים</h2>
+                <input type="text" class="search-bar" placeholder="🔍 חפש משתמש..." id="searchUsers" oninput="searchUsers(this.value)">
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>שם</th>
+                            <th>אימייל</th>
+                            <th>סוג חבילה</th>
+                            <th>חבילה</th>
+                            <th>נשלחו</th>
+                            <th>נרשם</th>
+                            <th>פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr><td colspan="7" style="text-align:center; padding:40px;">טוען נתונים...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>הזמנות אחרונות</h2>
+            </div>
+            <div id="invitationsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;"></div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <h2>הקצאת חבילה למשתמש</h2>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" onsubmit="return saveUser(event)">
+                    <input type="hidden" id="editUserId">
+                    
+                    <div class="form-group">
+                        <label>שם משתמש</label>
+                        <input type="text" id="editName" readonly style="background:#f9fafb;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>בחר חבילה להקצאה</label>
+                        <div class="package-grid">
+                            <div class="package-option" onclick="selectPackage(150)">
+                                <div class="package-number">150</div>
+                                <div>הזמנות</div>
+                            </div>
+                            <div class="package-option" onclick="selectPackage(200)">
+                                <div class="package-number">200</div>
+                                <div>הזמנות</div>
+                            </div>
+                            <div class="package-option" onclick="selectPackage(250)">
+                                <div class="package-number">250</div>
+                                <div>הזמנות</div>
+                            </div>
+                            <div class="package-option" onclick="selectPackage(300)">
+                                <div class="package-number">300</div>
+                                <div>הזמנות</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>או הזן מספר מותאם אישית</label>
+                        <input type="number" id="editInvites" placeholder="מספר הזמנות" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>סטטוס תשלום</label>
+                        <select id="editPaid">
+                            <option value="false">❌ לא שולם</option>
+                            <option value="true">✅ שולם</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn" onclick="closeModal()" style="background:#e0e0e0;">ביטול</button>
+                        <button type="submit" class="btn btn-primary">💾 שמור והקצה</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const sb = window.supabase.createClient(
+            'https://kzxyewemuykimsblotif.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6eHlld2VtdXlraW1zYmxvdGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NTkyOTMsImV4cCI6MjA4NjEzNTI5M30.WzXKlxgNtziO6OBgXEQjhdNiR8eEJqOZFDFwjfFNoHY'
+        );
+
+        let users = [];
+        let invitations = [];
+        let selectedPackage = null;
+
+        async function init() {
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) { window.location.href = 'index.html'; return; }
+            
+            const { data: profile } = await sb.from('users').select('*').eq('id', user.id).single();
+            if (!profile || !profile.is_admin) { 
+                alert('אין לך הרשאות מנהל');
+                window.location.href = 'dashboard.html'; 
+                return; 
+            }
+            
+            await loadData();
+        }
+
+        async function loadData() {
+            // Load users
+            const { data: usersData } = await sb.from('users').select('*').order('created_at', { ascending: false });
+            users = usersData || [];
+            
+            // Load invitations
+            const { data: invData } = await sb.from('invitations').select(`
+                *,
+                users(full_name, email)
+            `).order('created_at', { ascending: false }).limit(12);
+            invitations = invData || [];
+            
+            updateStats();
+            displayUsers(users);
+            displayInvitations();
+        }
+
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = users.length;
+            
+            const totalPackages = users.reduce((sum, u) => sum + (u.package_invites || 0), 0);
+            document.getElementById('totalInvites').textContent = totalPackages;
+            
+            const totalSent = users.reduce((sum, u) => sum + (u.package_sent || 0), 0);
+            document.getElementById('totalSent').textContent = totalSent;
+            
+            const paidUsers = users.filter(u => u.package_paid);
+            const revenue = paidUsers.reduce((sum, u) => {
+                if (u.package_invites === 150) return sum + 150;
+                if (u.package_invites === 200) return sum + 200;
+                if (u.package_invites === 250) return sum + 250;
+                if (u.package_invites === 300) return sum + 300;
+                return sum;
+            }, 0);
+            document.getElementById('totalRevenue').textContent = `₪${revenue}`;
+        }
+
+        function displayUsers(usersToShow) {
+            const tbody = document.getElementById('usersTable');
+            
+            if (usersToShow.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">אין משתמשים</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = usersToShow.map(u => {
+                const packageType = u.package_invites === 150 ? '150 הזמנות' :
+                                   u.package_invites === 200 ? '200 הזמנות' :
+                                   u.package_invites === 250 ? '250 הזמנות' :
+                                   u.package_invites === 300 ? '300 הזמנות' :
+                                   u.package_invites > 0 ? `${u.package_invites} מותאם` : 'ללא חבילה';
+                
+                return `
+                    <tr>
+                        <td><strong>${u.full_name}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${packageType}</td>
+                        <td><strong style="color:var(--rose)">${u.package_invites || 0}</strong></td>
+                        <td>${u.package_sent || 0}</td>
+                        <td>${new Date(u.created_at).toLocaleDateString('he-IL')}</td>
+                        <td>
+                            <button class="btn-small btn-edit" onclick="editUser('${u.id}')">
+                                ✏️ הקצה חבילה
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function displayInvitations() {
+            const grid = document.getElementById('invitationsGrid');
+            
+            if (invitations.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; color:#999;">אין הזמנות עדיין</p>';
+                return;
+            }
+            
+            grid.innerHTML = invitations.map(inv => {
+                const icon = inv.event_type === 'wedding' ? '💍' :
+                            inv.event_type === 'bar_mitzvah' ? '🎉' : '🎀';
+                
+                return `
+                    <div style="background:white; padding:24px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                        <div style="font-size:2.5rem; margin-bottom:12px;">${icon}</div>
+                        <h3 style="margin-bottom:8px; color:var(--rose);">${inv.title}</h3>
+                        <p style="color:#666; margin-bottom:8px;"><strong>משתמש:</strong> ${inv.users?.full_name || 'לא ידוע'}</p>
+                        <p style="color:#666;"><strong>תאריך:</strong> ${new Date(inv.event_date).toLocaleDateString('he-IL')}</p>
+                        <p style="color:#666;"><strong>מקום:</strong> ${inv.venue}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function searchUsers(query) {
+            const filtered = users.filter(u => 
+                u.full_name.toLowerCase().includes(query.toLowerCase()) ||
+                u.email.toLowerCase().includes(query.toLowerCase())
+            );
+            displayUsers(filtered);
+        }
+
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editName').value = user.full_name;
+            document.getElementById('editInvites').value = user.package_invites || '';
+            document.getElementById('editPaid').value = user.package_paid ? 'true' : 'false';
+            
+            selectedPackage = null;
+            document.querySelectorAll('.package-option').forEach(p => p.classList.remove('selected'));
+            
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        function selectPackage(num) {
+            selectedPackage = num;
+            document.querySelectorAll('.package-option').forEach(p => p.classList.remove('selected'));
+            event.target.closest('.package-option').classList.add('selected');
+            document.getElementById('editInvites').value = num;
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const invites = parseInt(document.getElementById('editInvites').value) || 0;
+            const paid = document.getElementById('editPaid').value === 'true';
+            
+            if (invites <= 0) {
+                alert('נא להזין מספר הזמנות תקין');
+                return false;
+            }
+            
+            if (!confirm(`להקצות ${invites} הזמנות למשתמש זה?`)) {
+                return false;
+            }
+            
+            const { error } = await sb.from('users').update({
+                package_invites: invites,
+                package_paid: paid
+            }).eq('id', userId);
+            
+            if (error) {
+                alert('שגיאה: ' + error.message);
+            } else {
+                alert(`✅ הוקצו ${invites} הזמנות בהצלחה!`);
+                closeModal();
+                await loadData();
+            }
+            
+            return false;
+        }
+
+        async function logout() {
+            await sb.auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        init();
+    </script>
+</body>
+</html>
